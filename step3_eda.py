@@ -48,6 +48,46 @@ def main():
                       for c in ["phone", "road_address_name", "category_name"]}
     r["raw_group"] = raw["category_group_code"].value_counts().to_dict()
 
+    # ---- 원본(전처리 전) 기준 그래프 ----
+    # R1. 중심으로부터 거리: 사각형으로 수집했기 때문에 반경 밖 데이터가 섞여 있음
+    out_pct = float((raw["dist_km"] > config.RADIUS_KM).mean() * 100)
+    r["raw_out_of_radius_pct"] = round(out_pct, 1)
+    fig, ax = plt.subplots(figsize=(7, 4))
+    ax.hist(raw["dist_km"], bins=40, color=C_GRAY)
+    ax.axvline(config.RADIUS_KM, color=C_UNIV, ls="--", lw=2)
+    ax.text(config.RADIUS_KM + 0.02, ax.get_ylim()[1] * .9, f"반경 {config.RADIUS_KM:g}km\n밖: {out_pct:.1f}%",
+            color=C_UNIV)
+    ax.set_title("[원본] 지역 중심으로부터 거리 분포")
+    ax.set_xlabel("거리 (km)")
+    ax.set_ylabel("행 수")
+    figs["raw_dist"] = save(fig, "00a_raw_distance.png")
+
+    # R2. 같은 가게가 몇 개 지역에서 중복 수집됐는지
+    times = raw.groupby("place_id").size().clip(upper=5)
+    vc = times.value_counts().sort_index()
+    r["raw_place_area_count"] = {("5+" if k == 5 else str(k)): int(v) for k, v in vc.items()}
+    fig, ax = plt.subplots(figsize=(6, 4))
+    ax.bar(["5+" if k == 5 else str(k) for k in vc.index], vc.values, color=C_CTRL)
+    for i, v in enumerate(vc.values):
+        ax.text(i, v, f"{v:,}", ha="center", va="bottom", fontsize=9)
+    ax.set_title("[원본] 한 가게가 수집된 지역 수 (중복)")
+    ax.set_xlabel("수집된 지역 수")
+    ax.set_ylabel("가게 수")
+    figs["raw_dup"] = save(fig, "00b_raw_duplicates.png")
+
+    # R3. 카카오 분류 깊이 + 그룹(음식점/카페)
+    raw_depth = raw["category_name"].fillna("").str.count(" > ") + 1
+    r["raw_depth_counts"] = raw_depth.value_counts().sort_index().to_dict()
+    fig, axes = plt.subplots(1, 2, figsize=(10, 3.8))
+    dc = raw_depth.value_counts().sort_index()
+    axes[0].bar(dc.index.astype(str), dc.values, color=C_GRAY)
+    axes[0].set_title("[원본] 카카오 분류 깊이 (단계 수)")
+    axes[0].set_xlabel("단계")
+    gc = raw["category_group_code"].map({"FD6": "음식점(FD6)", "CE7": "카페(CE7)"}).fillna("기타").value_counts()
+    axes[1].bar(gc.index, gc.values, color=[C_UNIV, C_CTRL, C_GRAY][:len(gc)])
+    axes[1].set_title("[원본] 카카오 그룹 코드")
+    figs["raw_depth"] = save(fig, "00c_raw_category_depth.png")
+
     # ---- 지역별 가게 수 ----
     per_area = df.groupby(["area_type", "area_name"]).size().rename("n").reset_index()
     r["per_area"] = per_area.groupby("area_type")["n"].describe().round(1).to_dict(orient="index")
@@ -112,17 +152,6 @@ def main():
     axes[1].hist(df["dist_km"], bins=30, color=C_GRAY)
     axes[1].set_title("지역 중심으로부터 거리 (km)")
     figs["dist"] = save(fig, "05_name_len_and_distance.png")
-
-    # ---- 위치 산점도 ----
-    fig, ax = plt.subplots(figsize=(7, 7))
-    for t, c in [("일반상권", C_CTRL), ("대학가", C_UNIV)]:
-        s = df[df.area_type == t]
-        ax.scatter(s["x"], s["y"], s=1, alpha=.4, color=c, label=t)
-    ax.set_title("수집한 가게 위치 (경도·위도)")
-    ax.set_xlabel("경도")
-    ax.set_ylabel("위도")
-    ax.legend(markerscale=10)
-    figs["scatter"] = save(fig, "06_location_scatter.png")
 
     r["figures"] = figs
     with open(os.path.join(config.REPORTS, "step3_eda.json"), "w", encoding="utf-8") as f:

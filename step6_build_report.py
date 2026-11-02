@@ -70,14 +70,29 @@ def main():
                  f"(여러 지역에 중복 수집된 행 {n(p3['raw_dup_rows'])}건)")
         L.append(f"- 컬럼: `{'`, `'.join(p3['raw_cols'])}`")
         L.append("- 빈 값 비율(%): " + ", ".join(f"{k} {v}" for k, v in p3["raw_blank"].items()))
-        L.append(f"- 카카오 분류 깊이 분포: {p3['depth_counts']} → **2단계 이하(예: '음식점 > 한식')인 가게 "
+        L.append(f"- 카카오 분류 깊이 분포(전처리 후): {p3['depth_counts']} → **2단계 이하(예: '음식점 > 한식')인 가게 "
                  f"{p3['shallow_pct']}%**")
         L.append(f"- 2단계 분류 종류 {p3['cat2_n_unique']}개, 3단계 {p3['cat3_n_unique']}개\n")
-        titles = {"per_area": "지역별 가게 수 TOP 15", "per_area_hist": "지역당 가게 수 분포",
+        titles = {"raw_dist": "[원본] 지역 중심으로부터 거리 — 반경 밖 데이터 확인",
+                  "raw_dup": "[원본] 한 가게가 수집된 지역 수 — 중복 확인",
+                  "raw_depth": "[원본] 카카오 분류 깊이와 그룹 코드",
+                  "per_area": "지역별 가게 수 TOP 15", "per_area_hist": "지역당 가게 수 분포",
                   "top_cat2": "카카오 2단계 분류 TOP 20", "composition": "대학가 vs 일반상권 업종 구성",
                   "dist": "이름 길이·거리 분포", "scatter": "수집 위치"}
-        for k, path in p3.get("figures", {}).items():
-            L.append(f"**{titles.get(k, k)}**\n\n![{k}]({path})\n")
+        figs = {k: v for k, v in p3.get("figures", {}).items() if k != "scatter"}
+        L.append("### 3-1. 원본 데이터 (전처리 전)\n")
+        if "raw_out_of_radius_pct" in p3:
+            L.append(f"- 사각형으로 수집했기 때문에 반경 {config.RADIUS_KM:g}km 밖 데이터가 "
+                     f"{p3['raw_out_of_radius_pct']}% 섞여 있음 → 전처리에서 제거")
+            L.append(f"- 한 가게가 여러 지역에 중복 수집된 경우: {p3['raw_place_area_count']} (수집된 지역 수: 가게 수) "
+                     "→ 가장 가까운 지역 1곳만 남김\n")
+        for k, path in figs.items():
+            if k.startswith("raw_"):
+                L.append(f"**{titles.get(k, k)}**\n\n![{k}]({path})\n")
+        L.append("### 3-2. 전처리 후 분포\n")
+        for k, path in figs.items():
+            if not k.startswith("raw_"):
+                L.append(f"**{titles.get(k, k)}**\n\n![{k}]({path})\n")
     else:
         L.append("- (step3 결과 없음)\n")
 
@@ -141,6 +156,8 @@ def main():
             chi2, pval, dof, _ = chi2_contingency(ct.values)
             pct = pd.DataFrame(p4["by_area_type"]).fillna(0)
             focus = [x for x in ["분식", "술집", "카페·디저트"] if x in pct.index]
+            L.append("- H1은 표본 2,400건이 아니라 전체 5만 건으로 비교하기 위해 **자동 라벨** 기준으로 검정했다. "
+                     f"자동 라벨의 정확도는 검수 결과 {p5.get('rule_accuracy', '-')}%로 확인했다.")
             L.append(f"- **H1**: 업종 구성(자동 라벨 기준) 카이제곱 검정 χ²={chi2:,.1f}, df={dof}, p={pval:.2e} → "
                      + ("**유의함 (p<0.05)**" if pval < 0.05 else "유의하지 않음") + "\n")
             L.append(table(["라벨", "대학가(%)", "일반상권(%)"],

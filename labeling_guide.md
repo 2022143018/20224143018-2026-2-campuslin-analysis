@@ -53,4 +53,4 @@
 2. 이름·분류만으로 확실하면 바로 판단, 애매하면 `kakao_url` 을 눌러 메뉴를 확인한다.
 3. `label_final` 이 맞으면 그대로, 틀리면 드롭다운에서 고친다.
 4. `확인` 칸에 **O** 를 입력한다. (O가 있는 행만 데이터셋에 들어감)
-5. 하루 뒤 `python step5_build_dataset.py --make-recheck` 로 200건을 다시 라벨링해 일관성을 확인한다.
+5. (선택) `python step5_build_dataset.py --make-recheck` 로 200건 재라벨링 시트를 만들어, 사람이 독립적으로 라벨링하면 검수 라벨과의 일치도를 계산할 수 있다.

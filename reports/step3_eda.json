@@ -32,6 +32,20 @@
   "FD6": 56295,
   "CE7": 15642
  },
+ "raw_out_of_radius_pct": 18.6,
+ "raw_place_area_count": {
+  "1": 49333,
+  "2": 7344,
+  "3": 2532,
+  "4": 80
+ },
+ "raw_depth_counts": {
+  "1": 330,
+  "2": 21090,
+  "3": 31163,
+  "4": 17684,
+  "5": 1670
+ },
  "per_area": {
   "대학가": {
    "count": 42.0,
@@ -133,11 +147,13 @@
   "max": 1.0
  },
  "figures": {
+  "raw_dist": "reports/figures/00a_raw_distance.png",
+  "raw_dup": "reports/figures/00b_raw_duplicates.png",
+  "raw_depth": "reports/figures/00c_raw_category_depth.png",
   "per_area": "reports/figures/01_per_area_top15.png",
   "per_area_hist": "reports/figures/02_per_area_hist.png",
   "top_cat2": "reports/figures/03_kakao_cat2_top20.png",
   "composition": "reports/figures/04_univ_vs_control_cat2.png",
-  "dist": "reports/figures/05_name_len_and_distance.png",
-  "scatter": "reports/figures/06_location_scatter.png"
+  "dist": "reports/figures/05_name_len_and_distance.png"
  }
 }
