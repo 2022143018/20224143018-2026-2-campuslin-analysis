@@ -1,0 +1,143 @@
+{
+ "raw_rows": 71937,
+ "raw_cols": [
+  "area_name",
+  "area_type",
+  "area_lat",
+  "area_lng",
+  "place_id",
+  "place_name",
+  "category_name",
+  "category_group_code",
+  "address_name",
+  "road_address_name",
+  "phone",
+  "x",
+  "y",
+  "dist_km",
+  "collected_at"
+ ],
+ "raw_unique_places": 59289,
+ "raw_dup_rows": 12648,
+ "raw_missing": {
+  "road_address_name": 0.3,
+  "phone": 29.5
+ },
+ "raw_blank": {
+  "phone": 29.5,
+  "road_address_name": 0.3,
+  "category_name": 0.0
+ },
+ "raw_group": {
+  "FD6": 56295,
+  "CE7": 15642
+ },
+ "per_area": {
+  "대학가": {
+   "count": 42.0,
+   "mean": 619.8,
+   "std": 502.9,
+   "min": 44.0,
+   "25%": 269.8,
+   "50%": 548.5,
+   "75%": 824.0,
+   "max": 2794.0
+  },
+  "일반상권": {
+   "count": 20.0,
+   "mean": 1228.2,
+   "std": 562.4,
+   "min": 493.0,
+   "25%": 785.8,
+   "50%": 1188.0,
+   "75%": 1444.5,
+   "max": 2576.0
+  }
+ },
+ "depth_counts": {
+  "1": 238,
+  "2": 14772,
+  "3": 21913,
+  "4": 12508,
+  "5": 1167
+ },
+ "cat2_n_unique": 27,
+ "cat3_n_unique": 321,
+ "top_cat2": {
+  "한식": 15287,
+  "카페": 10531,
+  "술집": 5432,
+  "간식": 3301,
+  "일식": 3030,
+  "양식": 2628,
+  "중식": 2357,
+  "분식": 2197,
+  "치킨": 1719,
+  "아시아음식": 760,
+  "패스트푸드": 723,
+  "샐러드": 437,
+  "샤브샤브": 322,
+  "퓨전요리": 289,
+  "뷔페": 284,
+  "여가시설": 272,
+  "(없음)": 238,
+  "도시락": 220,
+  "유아": 158,
+  "구내식당": 136
+ },
+ "shallow_pct": 29.7,
+ "composition_cat2": {
+  "대학가": {
+   "한식": 28.8,
+   "카페": 22.1,
+   "술집": 11.3,
+   "간식": 6.7,
+   "일식": 5.6,
+   "양식": 5.6,
+   "중식": 4.1,
+   "분식": 4.6,
+   "치킨": 3.8,
+   "아시아음식": 1.4
+  },
+  "일반상권": {
+   "한식": 31.7,
+   "카페": 19.4,
+   "술집": 10.1,
+   "간식": 6.3,
+   "일식": 6.4,
+   "양식": 4.7,
+   "중식": 5.3,
+   "분식": 4.1,
+   "치킨": 3.0,
+   "아시아음식": 1.6
+  }
+ },
+ "name_len": {
+  "count": 50598.0,
+  "mean": 7.6,
+  "std": 3.8,
+  "min": 1.0,
+  "25%": 4.0,
+  "50%": 7.0,
+  "75%": 10.0,
+  "max": 33.0
+ },
+ "dist_km": {
+  "count": 50598.0,
+  "mean": 0.588,
+  "std": 0.257,
+  "min": 0.0,
+  "25%": 0.378,
+  "50%": 0.604,
+  "75%": 0.81,
+  "max": 1.0
+ },
+ "figures": {
+  "per_area": "reports/figures/01_per_area_top15.png",
+  "per_area_hist": "reports/figures/02_per_area_hist.png",
+  "top_cat2": "reports/figures/03_kakao_cat2_top20.png",
+  "composition": "reports/figures/04_univ_vs_control_cat2.png",
+  "dist": "reports/figures/05_name_len_and_distance.png",
+  "scatter": "reports/figures/06_location_scatter.png"
+ }
+}
