@@ -60,9 +60,6 @@
 
 ![dist](reports/figures/05_name_len_and_distance.png)
 
-**수집 위치**
-
-![scatter](reports/figures/06_location_scatter.png)
 
 ## 4. 데이터 라벨링에 대한 정의
 
